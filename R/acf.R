@@ -7,29 +7,29 @@ function (x, lag.max = NULL, plot = FALSE, type = c("correlation",
     x.freq <- frequency(as.ts(x))
     x <- as.matrix(x)
     sampleT <- nrow(x)
-    #  or ? lag.max <- floor(10 * log10(sampleT))
+    nser <- ncol(x)
     if (is.null(lag.max)) 
-        lag.max <- floor(10 * (log10(sampleT) - log10(ncol(x))))
+        lag.max <- floor(10 * (log10(sampleT) - log10(nser)))
     lag.max <- min(lag.max, sampleT - 1)
-    xb <- sweep(x, 2, apply(x, 2, mean))
-    lag <- matrix(1, ncol(x), ncol(x))
+    x <- sweep(x, 2, apply(x, 2, mean))
+    lag <- matrix(1, nser, nser)
     lag[lower.tri(lag)] <- -1
     if (type == "partial") {
-        acf <- ar(x, order.max = lag.max)$partialacf
+        acf <- ar(xb, order.max = lag.max)$partialacf
         lag <- outer(1:lag.max, lag/x.freq)
     }
     else {
-        acf <- array(NA, c(lag.max + 1, ncol(x), ncol(x)))
-        for (i in 0:lag.max) {
-            Om <- (t(xb[(i + 1):sampleT, , drop = FALSE]) %*% 
-                xb[1:(sampleT - i), , drop = FALSE])/sampleT
-            if (type == "correlation") {
-                # nrow above for univariate case
-                if (i == 0) 
-                  Om0 <- diag(1/sqrt(diag(Om)), nrow = nrow(Om))
-                Om <- Om0 %*% Om %*% Om0
-            }
-            acf[i + 1, , ] <- Om
+        acf <- array(NA, c(lag.max + 1, nser, nser))
+        xp <- rbind(x, matrix(0, ncol = nser, nrow = nextn(sampleT + 
+            lag.max) - sampleT))
+        for (i in 1:nser) for (j in 1:nser) {
+            acf[, i, j] <- convolve(xp[, i], xp[, j])[1:(lag.max + 
+                1)]/sampleT
+        }
+        if (type == "correlation") {
+            var0 <- diag(acf[1, , ], nrow = nser)
+            acf0 <- sqrt(var0 %*% t(var0))
+            acf <- sweep(acf, c(2, 3), acf0, "/")
         }
         lag <- outer(0:lag.max, lag/x.freq)
     }
