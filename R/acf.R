@@ -34,45 +34,47 @@ function (x, lag.max = NULL, plot = FALSE, type = c("correlation",
         lag <- outer(0:lag.max, lag/x.freq)
     }
     acf.out <- structure(.Data = list(acf = acf, type = type, 
-        n.used = sampleT, lag = lag, series = series), class = "acf")
+        n.used = sampleT, lag = lag, series = series, snames = colnames(x)), 
+        class = "acf")
     if (plot) 
         plot.acf(acf.out)
     else return(acf.out)
 }
 "plot.acf" <-
-function (x, coverage = 0.95, ...) 
+function (x, ci = 0.95, type = "h", xlab = "Lag", ylab = NULL, 
+    ylim = NULL, main = NULL, ...) 
 {
     opar <- NULL
     on.exit(par(opar))
-    nser <- dim(x$lag)[2]
-    m <- min(nser, 5)
-    opar <- c(opar, par(mfrow = c(m, m)))
-    ylab <- switch(x$type, correlation = "ACF", covariance = "ACF", 
-        partial = "Partial ACF")
-    if (nser > 1) 
-        if (is.null(dimnames(x)) || is.null(dimnames(x)[[2]])) 
-            names <- paste("Series", 1:nser)
-        else names <- dimnames(x)[[2]]
+    nser <- ncol(x$lag)
+    opar <- c(opar, par(mfrow = rep(min(nser, 5), 2)))
+    if (is.null(ylab)) 
+        ylab <- switch(x$type, correlation = "ACF", covariance = "ACF", 
+            partial = "Partial ACF")
+    if (is.null(snames <- x$snames)) {
+        snames <- if (nser == 1) 
+            paste("Series", x$series)
+        else paste("Series", 1:nser)
+    }
+    with.ci <- (ci != 0) && (x$type != "covariance")
     for (i in 1:nser) for (j in 1:nser) {
-        if (x$type == "correlation" || x$type == "partial") {
-            clim <- qnorm((1 + coverage)/2)/sqrt(x$n.used)
+        clim <- if (with.ci) 
+            qnorm((1 + ci)/2)/sqrt(x$n.used)
+        else c(0, 0)
+        if (is.null(ylim)) {
             ymin <- min(c(x$acf[, i, j], -clim))
             ymax <- max(c(x$acf[, i, j], clim))
-            plot(x$lag[, i, j], x$acf[, i, j], type = "h", xlab = "Lag", 
-                ylab = ylab, ylim = c(ymin, ymax), ...)
+            ylim <- c(ymin, ymax)
+        }
+        plot(x$lag[, i, j], x$acf[, i, j], type = type, xlab = xlab, 
+            ylab = ylab, ylim = ylim, ...)
+        if (with.ci) 
             abline(h = c(clim, -clim), col = "red", lty = 2)
-        }
-        else {
-            plot(x$lag[, i, j], x$acf[, i, j], type = "h", xlab = "Lag", 
-                ylab = ylab, ...)
-        }
         abline(h = 0)
-        if (nser == 1) 
-            title(paste("Series:", x$series))
-        else {
-            if (i == j) 
-                title(names[i])
-            else title(paste(names[i], "&", names[j]))
-        }
+        if (!is.null(main)) 
+            title(main)
+        else if (i == j) 
+            title(snames[i])
+        else title(paste(snames[i], "&", snames[j]))
     }
 }

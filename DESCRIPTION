@@ -1,5 +1,5 @@
 Package: bats
-Version: 0.1-1
+Version: 0.1-2
 Author: Martyn Plummer <plummer@iarc.fr>,
         Paul Gilbert <pgilbert@bank-banque-canada.ca>
 Description: Basic time series modelling functions.

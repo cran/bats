@@ -1,0 +1,18 @@
+0.1-2
+
+- convolve.open folded into convolve (in base library version 0.64.2) 
+     by Martin Maechler.
+- spec.pgram returns objects of class "spec"
+- In spec.pgram: Fourier frequencies & spectrum corrected for time series 
+     with frequency != 1
+- plot.spec now allows you to change defaults for axis labels etc.
+- arguments "add" and "ci" added to plot.spec
+- added COPYING file (GPL)
+- plot.acf prints series names for multivariate series
+- added wrapper function "spectrum"
+- added help files - some hanging links still due to unimplemented
+     spec.ar and ar.burg
+
+0.1-1
+
+- First cut

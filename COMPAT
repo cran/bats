@@ -1,6 +1,11 @@
 Incompatibilities with S-PLUS 3.3.
 Some are intentional, others are bugs.
 
+spectrum
+--------
+
+Autoregressive spectrum estimation not implemented (bug).
+
 spec.pgram
 ----------
 
@@ -8,27 +13,25 @@ The periodogram at zero is not returned for the raw periodogram and is
 not used when calculating the smoothed periodogram (feature)
 
 The Fourier frequencies are different for series of odd length (feature)
+This has a knock-on effect on the bandwidth.
 
 Formula for degrees of freedom is correct only for case of no padding
-and no tapering (bug - where can I get the formula from?)
-
-Formula for bandwidth disagrees with S-PLUS for series of odd length
-(feature - a consequence of the different fourier frequencies).
+and no tapering (bug). This has a knock-on effect for the confidence
+intervals in plot.spec.
 
 Padding. The series will be automatically padded to a length which is a
 highly composite number in order to aid the fft algorithm. The padding
 behaviour is different from S-PLUS (feature: I can't work out the
 S-PLUS padding behaviour).
 
-
 plot.spec
 ---------
 
-Implemented as a method for the generic function plot (feature)
+Implemented as a method for the generic function plot (feature).
 
-Confidence intervals not added (bug)
+Confidence interval is calculated differently (feature).
 
-acf.plot
+plot.acf
 --------
 
 Implemented as a plot method for objects of class "acf" (feature).
@@ -56,5 +59,4 @@ likelihood ratio between models of different order - and hence the AIC  -
 is not meaningful.  This is a known "feature" of arima.mle in S-PLUS. It
 looks like ar does the same thing. I have used formula 17.29 from the
 "S-PLUS 3.3 guide to statistical and mathematical analysis" for the
-AIC. This isn't correct either, but it should be better.
-
+AIC. 

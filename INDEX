@@ -4,3 +4,4 @@ ar.yw		Estimate autoregression model by solving Yule-Walker equations
 plot.acf	Plot autocorrelation function
 plot.spec	Plot spectral density estimate
 spec.pgram	Estimate spectral density from periodogram
+spectrum	Wrapper for spectral density estimation functions
