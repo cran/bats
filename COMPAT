@@ -1,0 +1,60 @@
+Incompatibilities with S-PLUS 3.3.
+Some are intentional, others are bugs.
+
+spec.pgram
+----------
+
+The periodogram at zero is not returned for the raw periodogram and is
+not used when calculating the smoothed periodogram (feature)
+
+The Fourier frequencies are different for series of odd length (feature)
+
+Formula for degrees of freedom is correct only for case of no padding
+and no tapering (bug - where can I get the formula from?)
+
+Formula for bandwidth disagrees with S-PLUS for series of odd length
+(feature - a consequence of the different fourier frequencies).
+
+Padding. The series will be automatically padded to a length which is a
+highly composite number in order to aid the fft algorithm. The padding
+behaviour is different from S-PLUS (feature: I can't work out the
+S-PLUS padding behaviour).
+
+
+plot.spec
+---------
+
+Implemented as a method for the generic function plot (feature)
+
+Confidence intervals not added (bug)
+
+acf.plot
+--------
+
+Implemented as a plot method for objects of class "acf" (feature).
+
+ar
+--
+
+Burg's algorithm not implemented (bug)
+
+ar.yw
+-----
+
+ar coefficients disagree with S-PLUS for multivariate time
+series. (feature, I think this is a bug in S-PLUS.  The algorithm
+for involves alternating between the forward and backward Yule-Walker
+equations, which have different solutions in the multivariate case.
+If there are m series, S-PLUS gives the solution to the (forward)
+Yule-Walker equations up to order m, but the solution to the backward
+equations for higher orders. This doesn't seem to affect the prediction
+variance or the partial correlation.)
+
+aic is different (feature). S-PLUS uses the conditional likelihood,
+conditioning on the first p observations for an ar(p) process, so the
+likelihood ratio between models of different order - and hence the AIC  -
+is not meaningful.  This is a known "feature" of arima.mle in S-PLUS. It
+looks like ar does the same thing. I have used formula 17.29 from the
+"S-PLUS 3.3 guide to statistical and mathematical analysis" for the
+AIC. This isn't correct either, but it should be better.
+

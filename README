@@ -1,0 +1,20 @@
+BATS was written by Martyn Plummer <plummer@iarc.fr>, with contributions by
+Paul Gilbert <pgilbert@bank-banque-canada.ca>
+
+http://www.bank-banque-canada.ca/pgilbert
+
+This is a collection of time series functions which are not wholly
+unlike those found in S-PLUS.
+
+These functions started off as part of the "coda" package. At the
+time they contained only functionality required by coda. They have now
+been improved so that they are fully functional, and split off into a
+standalone package.
+
+Although I have tried in general to reproduce the S-PLUS behaviour, do
+not always agree with what the S-PLUS functions do. Incompatibilities
+with S-PLUS are listed in the file COMPAT. There are some known bugs
+listed there too, and of course there are plenty of other bugs lurking
+in the code waiting to be found. 
+
+Martyn
